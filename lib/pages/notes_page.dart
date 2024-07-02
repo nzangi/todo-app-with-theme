@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:notesapp/components/drawer.dart';
 import 'package:notesapp/model/notes_database.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // on app start up
+    // Get all the data on app start up
     super.initState();
     readNotes();
   }
@@ -31,39 +34,61 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
         onPressed: createNote,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add,color: Colors.white,),
+        child: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
       ),
-      body: ListView.builder(
-          itemCount: currentNotes.length,
-          itemBuilder: (context,index){
-          // get each note
-          final note = currentNotes[index];
-          //list UI
-          return ListTile(
-            title: Text(note.text),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                //edit button
-                  IconButton(
-                      onPressed: () => updateNote(note),
-                      icon: const Icon(Icons.edit)),
-                  //delete button
-                  IconButton(
-                      onPressed: () => deleteNode(note.id),
-                      icon: const Icon(Icons.edit))
-                ],
+      drawer: MyDrawer(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //HEADING
+           Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: Text(
+              'Notes',
+              style: GoogleFonts.dmSerifText(
+                  fontSize: 40,
+                  color: Theme.of(context).colorScheme.inversePrimary),
             ),
-          );
-      }
+          ),
+          //LIST OF NOTES
+          Expanded(
+            child: ListView.builder(
+                itemCount: currentNotes.length,
+                itemBuilder: (context,index){
+                // get each note
+                final note = currentNotes[index];
+                //list UI
+                return ListTile(
+                  title: Text(note.text),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      //edit button
+                        IconButton(
+                            onPressed: () => updateNote(note),
+                            icon: const Icon(Icons.edit)),
+                        //delete button
+                        IconButton(
+                            onPressed: () => deleteNode(note.id),
+                            icon: const Icon(Icons.delete))
+                      ],
+                  ),
+                );
+            }
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -74,7 +99,6 @@ class _HomePageState extends State<HomePage> {
          AlertDialog(
           content: TextField(
             controller: textController,
-            maxLines: 5,
           ),
            actions: [
              //create button
