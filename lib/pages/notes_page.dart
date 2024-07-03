@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notesapp/components/drawer.dart';
+import 'package:notesapp/components/note_tile.dart';
 import 'package:notesapp/model/notes_database.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         onPressed: createNote,
         shape: const CircleBorder(),
         child: Icon(
@@ -69,23 +71,12 @@ class _HomePageState extends State<HomePage> {
                 // get each note
                 final note = currentNotes[index];
                 //list UI
-                return ListTile(
-                  title: Text(note.text),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //edit button
-                        IconButton(
-                            onPressed: () => updateNote(note),
-                            icon: const Icon(Icons.edit)),
-                        //delete button
-                        IconButton(
-                            onPressed: () => deleteNode(note.id),
-                            icon: const Icon(Icons.delete))
-                      ],
-                  ),
-                );
-            }
+                  return NoteTile(
+                    text: note.text,
+                    onEditPressed: () => updateNote(note),
+                    onDeletePressed: () => deleteNote(note.id),
+                  );
+                }
             ),
           ),
         ],
@@ -97,7 +88,8 @@ class _HomePageState extends State<HomePage> {
   void createNote(){
     showDialog(context: context, builder: (context) =>
          AlertDialog(
-          content: TextField(
+           backgroundColor: Theme.of(context).colorScheme.background,
+           content: TextField(
             controller: textController,
           ),
            actions: [
@@ -131,7 +123,8 @@ class _HomePageState extends State<HomePage> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text('Update Note'),
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: const Text('Update Note'),
               content: TextField(
                 controller: textController,
               ),
@@ -155,7 +148,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // delete note
-  void deleteNode(int id){
+  void deleteNote(int id){
     context.read<NoteDatabase>().deleteNote(id);
   }
 }
